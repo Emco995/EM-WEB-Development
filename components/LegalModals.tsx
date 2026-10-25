@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ShieldCheck, Scale, FileText } from "lucide-react";
 
@@ -11,33 +12,52 @@ interface LegalModalsProps {
 }
 
 export default function LegalModals({ activeModal, onClose }: LegalModalsProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    if (activeModal) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeModal, onClose]);
+
   if (!activeModal) return null;
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+      <div
+        onClick={onClose}
+        className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md"
+      >
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          onClick={(e) => e.stopPropagation()}
+          initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-2xl bg-[#0b101b] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-[0_0_50px_rgba(0,0,0,0.9)] overflow-hidden max-h-[85vh] flex flex-col"
+          exit={{ opacity: 0, scale: 0.95, y: 15 }}
+          transition={{ duration: 0.2 }}
+          className="relative w-full max-w-2xl bg-[#0b101b] border border-slate-800 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.9)] overflow-hidden max-h-[85vh] flex flex-col"
         >
-          {/* Crveni detalj na vrhu modala */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#ff2a4b] to-transparent" />
+          <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#ff2a4b] to-transparent shrink-0" />
 
-          {/* Dugme za zatvaranje */}
-          <button
-            onClick={onClose}
-            className="absolute top-5 right-5 p-2 rounded-lg bg-[#060a12] border border-slate-800 text-slate-400 hover:text-white hover:border-[#ff2a4b] transition-all"
-            aria-label="Zatvori"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          {/* Header sa vidljivim X dugmetom */}
+          <div className="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-[#0b101b]/95 backdrop-blur-md border-b border-slate-800/80">
+            <div className="text-xs font-mono uppercase text-[#ff2a4b]">
+              Rechtliche Dokumente
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg bg-[#060a12] border border-slate-800 text-slate-300 hover:text-white hover:border-[#ff2a4b] transition-all cursor-pointer flex items-center justify-center"
+              aria-label="Zatvori"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
-          {/* Sadržaj u zavisnosti od odabranog modala */}
-          <div className="overflow-y-auto pr-2 space-y-5 text-slate-300 text-xs sm:text-sm leading-relaxed">
-            
-            {/* 1. IMPRESSUM */}
+          <div className="overflow-y-auto p-6 space-y-5 text-slate-300 text-xs sm:text-sm leading-relaxed">
             {activeModal === "impressum" && (
               <>
                 <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#ff2a4b] mb-1">
@@ -68,7 +88,6 @@ export default function LegalModals({ activeModal, onClose }: LegalModalsProps) 
               </>
             )}
 
-            {/* 2. DATENSCHUTZERKLÄRUNG (DSGVO) */}
             {activeModal === "datenschutz" && (
               <>
                 <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#ff2a4b] mb-1">
@@ -109,7 +128,6 @@ export default function LegalModals({ activeModal, onClose }: LegalModalsProps) 
               </>
             )}
 
-            {/* 3. AGB (ALLGEMEINE GESCHÄFTSBEDINGUNGEN) */}
             {activeModal === "agb" && (
               <>
                 <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#ff2a4b] mb-1">
@@ -149,16 +167,15 @@ export default function LegalModals({ activeModal, onClose }: LegalModalsProps) 
                 </div>
               </>
             )}
-
           </div>
 
-          {/* Dugme na dnu */}
-          <div className="pt-4 mt-4 border-t border-slate-800 flex justify-end">
+          <div className="px-6 py-3.5 bg-[#080d17] border-t border-slate-800/80 flex justify-between items-center text-xs font-mono text-slate-500">
+            <span>Pritisnite ESC za izlaz</span>
             <button
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl bg-[#060a12] border border-slate-700 text-slate-300 text-xs font-semibold uppercase tracking-wider hover:bg-slate-900 hover:text-white transition-all"
+              className="px-4 py-2 rounded-xl bg-[#060a12] border border-slate-700 text-slate-300 text-xs font-semibold uppercase tracking-wider hover:bg-slate-900 transition-all cursor-pointer"
             >
-              Schließen / Zatvori
+              Zatvori
             </button>
           </div>
         </motion.div>

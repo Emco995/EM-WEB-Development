@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ExternalLink,
@@ -116,6 +116,51 @@ export default function Projects() {
   const [filter, setFilter] = useState<CategoryFilter>("Sve");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
+  // Blokiranje skrola pozadine
+  useEffect(() => {
+    if (selectedProject) {
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = "hidden";
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+    } else {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+    };
+  }, [selectedProject]);
+
+  const handleCloseModal = () => {
+    setSelectedProject(null);
+    const targetEl = document.getElementById("projekti");
+    if (targetEl) {
+      const navOffset = 80;
+      const targetPosition = targetEl.getBoundingClientRect().top + window.scrollY - navOffset;
+      window.scrollTo({
+        top: targetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleCloseModal();
+      }
+    };
+
+    if (selectedProject) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedProject]);
+
   const filteredProjects =
     filter === "Sve"
       ? projectsData
@@ -147,7 +192,7 @@ export default function Projects() {
             <button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`px-4 py-2 rounded-lg transition-all uppercase tracking-wider ${
+              className={`px-4 py-2 rounded-lg transition-all uppercase tracking-wider cursor-pointer ${
                 filter === tab
                   ? "bg-[#ff2a4b] text-white font-bold shadow-[0_0_15px_rgba(255,42,75,0.35)]"
                   : "bg-[#0b101b] text-slate-400 hover:text-white hover:bg-[#121a2c] border border-slate-800"
@@ -191,7 +236,7 @@ export default function Projects() {
                       </div>
                     </div>
 
-                    <div className="relative h-52 w-full overflow-hidden bg-[#060a12] group/vid">
+                    <div className="relative h-64 sm:h-56 lg:h-52 w-full overflow-hidden bg-[#060a12] group/vid">
                       <video
                         src={project.videoUrl}
                         autoPlay
@@ -206,7 +251,7 @@ export default function Projects() {
                         href={project.demoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover/vid:opacity-100 transition-opacity duration-300"
+                        className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover/vid:opacity-100 transition-opacity duration-300 cursor-pointer"
                       >
                         <span className="px-3.5 py-1.5 rounded-lg bg-black/90 backdrop-blur-md text-white font-mono text-xs uppercase tracking-wider border border-[#ff2a4b]/40 inline-flex items-center gap-2 shadow-2xl">
                           Posjeti Stranicu <ExternalLink className="w-3.5 h-3.5 text-[#ff2a4b]" />
@@ -271,7 +316,7 @@ export default function Projects() {
                       <div className="grid grid-cols-2 gap-2">
                         <button
                           onClick={() => setSelectedProject(project)}
-                          className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#060a12] border border-slate-700/80 text-slate-200 text-xs font-semibold uppercase tracking-wider hover:border-[#ff2a4b] hover:text-white transition-all"
+                          className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#060a12] border border-slate-700/80 text-slate-200 text-xs font-semibold uppercase tracking-wider hover:border-[#ff2a4b] hover:text-white transition-all cursor-pointer"
                         >
                           Detalji
                           <ArrowRight className="w-3.5 h-3.5" />
@@ -281,7 +326,7 @@ export default function Projects() {
                           href={project.demoUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#ff2a4b] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_15px_rgba(255,42,75,0.4)] transition-all"
+                          className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#ff2a4b] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_15px_rgba(255,42,75,0.4)] transition-all cursor-pointer"
                         >
                           Uživo
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -295,92 +340,122 @@ export default function Projects() {
           </AnimatePresence>
         </motion.div>
 
+        {/* MODAL ZA DETALJE PROJEKTA SA IDENTIČNIM BLUR EFEKTOM KAO IMPRESSUM */}
         <AnimatePresence>
           {selectedProject && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+            <div
+              onClick={handleCloseModal}
+              className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md"
+            >
               <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-2xl bg-[#0b101b] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-[0_0_50px_rgba(0,0,0,0.9)] overflow-hidden max-h-[90vh] overflow-y-auto"
+                exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                transition={{ duration: 0.2 }}
+                className="relative w-full max-w-2xl bg-[#0b101b] border border-slate-800 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.95)] overflow-hidden max-h-[85vh] flex flex-col"
               >
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#ff2a4b] to-transparent" />
+                {/* Crvena linija na vrhu */}
+                <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#ff2a4b] to-transparent shrink-0" />
 
-                <button
-                  onClick={() => setSelectedProject(null)}
-                  className="absolute top-5 right-5 p-2 rounded-lg bg-[#060a12] border border-slate-800 text-slate-400 hover:text-white hover:border-[#ff2a4b] transition-all"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-
-                <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#ff2a4b] mb-2">
-                  <Layers className="w-4 h-4" />
-                  <span>Case Study & Pregled Rješenja</span>
-                </div>
-
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">
-                  {selectedProject.title}
-                </h3>
-                <p className="text-sm text-slate-400 mb-6">{selectedProject.subtitle}</p>
-
-                <div className="rounded-xl overflow-hidden border border-slate-800 mb-6 bg-black">
-                  <video
-                    src={selectedProject.videoUrl}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    controls
-                    className="w-full h-56 sm:h-72 object-cover object-top"
-                  />
-                </div>
-
-                <div className="space-y-4 mb-6 text-sm text-slate-300">
-                  <div className="p-4 rounded-xl bg-[#060a12] border border-slate-800/80">
-                    <span className="text-xs uppercase font-mono tracking-wider text-slate-400 block mb-1">
-                      Problem & Zadatak:
-                    </span>
-                    <p className="text-slate-300">{selectedProject.description}</p>
+                {/* Gornji informativni header */}
+                <div className="flex items-center justify-between px-6 py-3 bg-[#080d17] border-b border-slate-800/80 shrink-0">
+                  <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#ff2a4b]">
+                    <Layers className="w-4 h-4" />
+                    <span>Case Study & Pregled Rješenja</span>
                   </div>
-
-                  <div className="p-4 rounded-xl bg-[#060a12] border border-slate-800/80">
-                    <span className="text-xs uppercase font-mono tracking-wider text-[#ff2a4b] block mb-1">
-                      Implementirano rješenje:
-                    </span>
-                    <p className="text-slate-300">{selectedProject.solution}</p>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <span className="text-xs uppercase font-mono tracking-wider text-slate-400 block mb-3">
-                    Ključne stavke:
+                  <span className="text-[11px] font-mono text-slate-500 uppercase tracking-widest hidden sm:inline-block">
+                    ESC za izlaz
                   </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {selectedProject.highlights.map((h, i) => (
-                      <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                        <CheckCircle2 className="w-4 h-4 text-[#ff2a4b] shrink-0 mt-0.5" />
-                        <span>{h}</span>
-                      </div>
-                    ))}
+                </div>
+
+                {/* Scrollabilni unutrašnji prozor */}
+                <div className="p-6 overflow-y-auto space-y-6 overscroll-contain">
+                  
+                  {/* Naslov projekta i X dugme desno */}
+                  <div className="flex items-start justify-between gap-4 pb-2 border-b border-slate-800/60">
+                    <div>
+                      <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                        {selectedProject.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                        {selectedProject.subtitle}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={handleCloseModal}
+                      className="shrink-0 p-2.5 rounded-xl bg-[#060a12] border border-slate-700/80 text-slate-300 hover:text-white hover:border-[#ff2a4b] hover:bg-[#ff2a4b]/10 transition-all cursor-pointer flex items-center justify-center group shadow-md"
+                      aria-label="Zatvori detalje"
+                      title="Zatvori detalje i vrati se na projekte"
+                    >
+                      <X className="w-5 h-5 group-hover:scale-110 transition-transform text-slate-300 group-hover:text-[#ff2a4b]" />
+                    </button>
+                  </div>
+
+                  <div className="rounded-xl overflow-hidden border border-slate-800 bg-black">
+                    <video
+                      src={selectedProject.videoUrl}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      controls
+                      className="w-full h-48 sm:h-64 object-cover object-top"
+                    />
+                  </div>
+
+                  <div className="space-y-3 text-xs sm:text-sm text-slate-300">
+                    <div className="p-4 rounded-xl bg-[#060a12] border border-slate-800/80">
+                      <span className="text-[11px] uppercase font-mono tracking-wider text-slate-400 block mb-1">
+                        Problem & Zadatak:
+                      </span>
+                      <p className="text-slate-300">{selectedProject.description}</p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#060a12] border border-slate-800/80">
+                      <span className="text-[11px] uppercase font-mono tracking-wider text-[#ff2a4b] block mb-1">
+                        Implementirano rješenje:
+                      </span>
+                      <p className="text-slate-300">{selectedProject.solution}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-[11px] uppercase font-mono tracking-wider text-slate-400 block mb-2.5">
+                      Ključne stavke:
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {selectedProject.highlights.map((h, i) => (
+                        <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                          <CheckCircle2 className="w-4 h-4 text-[#ff2a4b] shrink-0 mt-0.5" />
+                          <span>{h}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-                  <button
-                    onClick={() => setSelectedProject(null)}
-                    className="px-5 py-2.5 rounded-xl bg-[#060a12] border border-slate-700 text-slate-300 text-xs font-semibold uppercase tracking-wider hover:bg-slate-900 transition-all"
-                  >
-                    Zatvori
-                  </button>
-                  <a
-                    href={selectedProject.demoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-5 py-2.5 rounded-xl bg-[#ff2a4b] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#dc2626] transition-all inline-flex items-center gap-1.5"
-                  >
-                    Otvori Stranicu
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                {/* Footer modala sa dugmadima */}
+                <div className="px-6 py-3.5 bg-[#080d17] border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-slate-500 shrink-0">
+                  <span className="hidden sm:inline">Pritisnite ESC za izlaz</span>
+                  <div className="flex items-center gap-3 ml-auto">
+                    <button
+                      onClick={handleCloseModal}
+                      className="px-4 py-2 rounded-xl bg-[#060a12] border border-slate-700 text-slate-300 text-xs font-semibold uppercase tracking-wider hover:bg-slate-900 transition-all cursor-pointer"
+                    >
+                      Zatvori
+                    </button>
+                    <a
+                      href={selectedProject.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 rounded-xl bg-[#ff2a4b] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#dc2626] transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                    >
+                      Otvori Stranicu
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
                 </div>
               </motion.div>
             </div>
