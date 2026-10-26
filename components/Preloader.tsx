@@ -163,40 +163,40 @@ export default function Preloader({ onComplete }: PreloaderProps) {
         </motion.div>
       </div>
 
-      {/* SREDNJI DIO: SAVRŠENO PORAVNAN SUSRET BEZ PROLAŽENJA JEDNE ISPOD DRUGE */}
-      <div className="relative w-full max-w-5xl h-64 sm:h-96 flex items-center justify-center my-auto pointer-events-none">
+      {/* SREDNJI DIO: POVEĆANE RUKE NA MOBITELU S PODIGNUTOM TAČKOM */}
+      <div className="relative w-full max-w-5xl h-72 sm:h-96 flex items-center justify-center my-auto pointer-events-none">
         
-        {/* LIJEVA: ROBOTSKA RUKA */}
+        {/* LIJEVA: ROBOTSKA RUKA (Povećana za mobilni: w-52 h-40 / sm:w-[420px] sm:h-72) */}
         <motion.div
-          initial={{ x: -160, opacity: 0 }}
+          initial={{ x: -170, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{
             duration: 2.0,
             ease: [0.22, 1, 0.36, 1],
             delay: 0.15,
           }}
-          className="absolute -left-2 sm:left-14 top-1/2 -translate-y-1/2 sm:top-4 sm:translate-y-0 w-44 sm:w-[420px] h-32 sm:h-72"
+          className="absolute -left-3 sm:left-14 top-1/2 -translate-y-1/2 sm:top-4 sm:translate-y-0 w-52 sm:w-[420px] h-40 sm:h-72"
         >
-          <div className="relative w-full h-full drop-shadow-[0_0_20px_rgba(255,42,75,0.45)]">
+          <div className="relative w-full h-full drop-shadow-[0_0_22px_rgba(255,42,75,0.45)]">
             <Image
               src="/images/robot-hand.png"
               alt="Robot Cyber Hand"
               fill
-              sizes="(max-width: 640px) 176px, 420px"
+              sizes="(max-width: 640px) 210px, 420px"
               className="object-contain object-right"
               priority
             />
           </div>
         </motion.div>
 
-        {/* TOČKA SUSRETA - TOČNO U CENTRU IZMEĐU PRSTIJU */}
+        {/* TOČKA SUSRETA - VERTIKALNO PODIGNUTA */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: [0, 1.6, 1], opacity: [0, 1, 0.95] }}
           transition={{ duration: 0.6, delay: 1.6, ease: "easeOut" }}
-          className="relative flex items-center justify-center z-30 sm:-translate-y-8"
+          className="relative flex items-center justify-center z-30 -translate-y-6 sm:-translate-y-12"
         >
-          <div className="w-8 sm:w-12 h-8 sm:h-12 rounded-full bg-[#ff2a4b] blur-[10px] sm:blur-[14px] animate-pulse" />
+          <div className="w-9 sm:w-12 h-9 sm:h-12 rounded-full bg-[#ff2a4b] blur-[10px] sm:blur-[14px] animate-pulse" />
           <div className="absolute w-3 sm:w-4 h-3 sm:h-4 rounded-full bg-white shadow-[0_0_18px_#ffffff]" />
           <motion.div
             animate={{ scale: [1, 2.4, 1], opacity: [0.75, 0.1, 0.75] }}
@@ -205,23 +205,23 @@ export default function Preloader({ onComplete }: PreloaderProps) {
           />
         </motion.div>
 
-        {/* DESNA: LJUDSKA RUKA */}
+        {/* DESNA: LJUDSKA RUKA (Povećana za mobilni: w-52 h-40 / sm:w-[420px] sm:h-72) */}
         <motion.div
-          initial={{ x: 160, opacity: 0 }}
+          initial={{ x: 170, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{
             duration: 2.0,
             ease: [0.22, 1, 0.36, 1],
             delay: 0.15,
           }}
-          className="absolute -right-2 sm:right-14 top-1/2 -translate-y-1/2 sm:top-auto sm:bottom-4 sm:translate-y-0 w-44 sm:w-[420px] h-32 sm:h-72"
+          className="absolute -right-3 sm:right-14 top-1/2 -translate-y-1/2 sm:top-auto sm:bottom-4 sm:translate-y-0 w-52 sm:w-[420px] h-40 sm:h-72"
         >
-          <div className="relative w-full h-full drop-shadow-[0_0_20px_rgba(255,255,255,0.25)]">
+          <div className="relative w-full h-full drop-shadow-[0_0_22px_rgba(255,255,255,0.25)]">
             <Image
               src="/images/human-hand.png"
               alt="Human Hand"
               fill
-              sizes="(max-width: 640px) 176px, 420px"
+              sizes="(max-width: 640px) 210px, 420px"
               className="object-contain object-left"
               priority
             />
