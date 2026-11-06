@@ -2,8 +2,26 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight, Code2, ShieldCheck, Zap, Sparkles } from "lucide-react";
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function Hero() {
+  const { t } = useLanguage();
+
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const targetEl = document.getElementById(id);
+    if (targetEl) {
+      const navOffset = 80;
+      const elementPosition = targetEl.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - navOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <section className="relative min-h-[92vh] flex items-center justify-center pt-24 pb-16 px-4 overflow-hidden bg-gradient-to-b from-[#091326] via-[#0d1d3a] to-[#081020]">
       {/* Centralni svjetlosni naglasak */}
@@ -29,7 +47,7 @@ export default function Hero() {
           className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#050b14]/80 backdrop-blur-md border border-slate-700/60 text-white text-xs font-mono tracking-widest uppercase mb-8 shadow-lg shadow-black/30"
         >
           <Sparkles className="w-3.5 h-3.5 text-[#ff2a4b]" />
-          <span>Full-Stack & E-Commerce Developer</span>
+          <span>{t.hero.badge}</span>
         </motion.div>
 
         {/* Glavni Naslov */}
@@ -39,9 +57,9 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.15]"
         >
-          Gradim brze, profitabilne <br />
+          {t.hero.titleLine1} <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-sky-200 to-[#ff2a4b]">
-            web stranice i e-trgovine.
+            {t.hero.titleGradient}
           </span>
         </motion.h1>
 
@@ -52,8 +70,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="max-w-2xl mx-auto text-base sm:text-lg text-slate-300 mb-10 leading-relaxed font-normal"
         >
-          Od online narudžbi do Stripe/PayPal plaćanja i pravnih standarda (DSGVO). 
-          Pretvaram posjetioce u kupce kroz moderan dizajn i optimizovan kod.
+          {t.hero.subtitle}
         </motion.p>
 
         {/* Akciona Dugmad */}
@@ -65,17 +82,19 @@ export default function Hero() {
         >
           <a
             href="#projekti"
-            className="w-full sm:w-auto px-8 py-3.5 rounded-lg bg-[#ff2a4b] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_25px_rgba(255,42,75,0.45)] transition-all flex items-center justify-center gap-2 group"
+            onClick={(e) => scrollToSection(e, "projekti")}
+            className="w-full sm:w-auto px-8 py-3.5 rounded-lg bg-[#ff2a4b] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_25px_rgba(255,42,75,0.45)] transition-all flex items-center justify-center gap-2 group cursor-pointer"
           >
-            Pogledaj Uživo Radove
+            <span>{t.hero.viewWorkBtn}</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </a>
 
           <a
             href="#kontakt"
-            className="w-full sm:w-auto px-8 py-3.5 rounded-lg bg-[#050b14]/80 backdrop-blur-sm border border-slate-700/80 hover:border-[#ff2a4b]/60 text-slate-200 font-medium text-sm transition-all hover:bg-[#0e1726]"
+            onClick={(e) => scrollToSection(e, "kontakt")}
+            className="w-full sm:w-auto px-8 py-3.5 rounded-lg bg-[#050b14]/80 backdrop-blur-sm border border-slate-700/80 hover:border-[#ff2a4b]/60 text-slate-200 font-medium text-sm transition-all hover:bg-[#0e1726] cursor-pointer"
           >
-            Besplatne Konsultacije
+            {t.hero.consultationBtn}
           </a>
         </motion.div>
 
@@ -88,17 +107,17 @@ export default function Hero() {
         >
           <div className="flex items-center justify-center md:justify-start gap-3 text-slate-200 bg-[#050b14]/70 backdrop-blur-sm p-4 rounded-xl border border-slate-800/80 hover:border-slate-700 transition-all">
             <Zap className="w-5 h-5 text-[#ff2a4b]" />
-            <span className="text-xs uppercase font-mono tracking-wider">Ultra-brz odziv & SEO</span>
+            <span className="text-xs uppercase font-mono tracking-wider">{t.hero.cardSpeed}</span>
           </div>
 
           <div className="flex items-center justify-center md:justify-start gap-3 text-slate-200 bg-[#050b14]/70 backdrop-blur-sm p-4 rounded-xl border border-slate-800/80 hover:border-slate-700 transition-all">
             <ShieldCheck className="w-5 h-5 text-[#ff2a4b]" />
-            <span className="text-xs uppercase font-mono tracking-wider">DSGVO & EU Pravila</span>
+            <span className="text-xs uppercase font-mono tracking-wider">{t.hero.cardSecurity}</span>
           </div>
 
           <div className="flex items-center justify-center md:justify-start gap-3 text-slate-200 bg-[#050b14]/70 backdrop-blur-sm p-4 rounded-xl border border-slate-800/80 hover:border-slate-700 transition-all">
             <Code2 className="w-5 h-5 text-[#ff2a4b]" />
-            <span className="text-xs uppercase font-mono tracking-wider">Next.js & Čist Kod</span>
+            <span className="text-xs uppercase font-mono tracking-wider">{t.hero.cardCode}</span>
           </div>
         </motion.div>
 

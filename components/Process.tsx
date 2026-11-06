@@ -2,72 +2,28 @@
 
 import { motion } from "framer-motion";
 import { MessageSquareText, Palette, Code, Rocket, CheckCircle2, ArrowRight } from "lucide-react";
-
-interface Step {
-  number: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  deliverables: string[];
-  icon: typeof MessageSquareText;
-}
-
-const stepsData: Step[] = [
-  {
-    number: "01",
-    title: "Konsultacije & Strategija",
-    subtitle: "Upoznavanje sa vašim ciljevima",
-    description:
-      "Definišemo šta tačno želite postići web stranicom: više online narudžbi, zakazivanje termina ili jači brend na lokalnom tržištu.",
-    deliverables: [
-      "Analiza konkurencije i ciljne publike",
-      "Plan strukture i potrebnih integracija",
-      "Fiksna procjena vremena i budžeta",
-    ],
-    icon: MessageSquareText,
-  },
-  {
-    number: "02",
-    title: "UI/UX Dizajn & Prototip",
-    subtitle: "Vizuelni koncept prilagođen kupcima",
-    description:
-      "Kreiramo moderan, estetski usklađen dizajn koji je maksimalno pregledan na mobilnim uređajima i vodi posjetioca direktno do akcije.",
-    deliverables: [
-      "Mobile-first raspored prilagođen brzom pregledu",
-      "Paleta boja, tipografija i vizuelni identitet",
-      "Pregled i odobrenje prije početka kodiranja",
-    ],
-    icon: Palette,
-  },
-  {
-    number: "03",
-    title: "Razvoj & Integracije",
-    subtitle: "Pisanje čistog i brzog koda",
-    description:
-      "Pretvaranje dizajna u ultra-brzu web stranicu koristeći Next.js, sa povezanim sistemima plaćanja (Stripe/PayPal) i pravnim stranicama.",
-    deliverables: [
-      "Integracija online plaćanja ili kontakt formi",
-      "DSGVO pravna usklađenost (Impressum, Datenschutz)",
-      "Optimizacija brzine učitavanja (Core Web Vitals)",
-    ],
-    icon: Code,
-  },
-  {
-    number: "04",
-    title: "Testiranje & Lansiranje",
-    subtitle: "Spremni za prve kupce i klijente",
-    description:
-      "Temeljno testiranje na svim telefonima i računarima, postavljanje na vašu domenu i kratka obuka za upravljanje sadržajem.",
-    deliverables: [
-      "Povezivanje domene i SSL sigurnosnog certifikata",
-      "Povezivanje sa Google pretragom (Google Search Console)",
-      "Podrška i održavanje nakon lansiranja",
-    ],
-    icon: Rocket,
-  },
-];
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function Process() {
+  const { t } = useLanguage();
+
+  const stepIcons = [MessageSquareText, Palette, Code, Rocket];
+
+  const scrollToContact = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const targetEl = document.getElementById("kontakt");
+    if (targetEl) {
+      const navOffset = 80;
+      const elementPosition = targetEl.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - navOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <section
       id="proces"
@@ -84,22 +40,21 @@ export default function Process() {
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#ff2a4b] mb-3">
               <span className="w-2 h-2 rounded-full bg-[#ff2a4b]"></span>
-              Jasni koraci saradnje
+              {t.process.badge}
             </div>
             <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-              Kako Radimo Zajedno
+              {t.process.title}
             </h2>
           </div>
           <p className="text-slate-400 max-w-md text-sm sm:text-base">
-            Od ideje do online narudžbi bez stresa i skrivenih troškova.
-            Transparentan proces u 4 definisana koraka.
+            {t.process.desc}
           </p>
         </div>
 
         {/* Timeline / Grid Koraka */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative mb-16">
-          {stepsData.map((step, idx) => {
-            const Icon = step.icon;
+          {t.process.steps.map((step, idx) => {
+            const Icon = stepIcons[idx] || MessageSquareText;
             return (
               <motion.div
                 key={step.number}
@@ -137,7 +92,7 @@ export default function Process() {
                 {/* Šta dobijate u ovom koraku */}
                 <div className="pt-4 border-t border-slate-800/80 space-y-2">
                   <div className="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">
-                    Isporučeno:
+                    {t.process.deliveredLabel}
                   </div>
                   {step.deliverables.map((item, i) => (
                     <div key={i} className="flex items-start gap-2 text-[11px] text-slate-300">
@@ -160,18 +115,19 @@ export default function Process() {
         >
           <div>
             <h4 className="text-xl sm:text-2xl font-bold text-white mb-2">
-              Imate ideju ili želite unaprijediti postojeću stranicu?
+              {t.process.ctaTitle}
             </h4>
             <p className="text-slate-400 text-xs sm:text-sm max-w-xl">
-              Besplatno ćemo proći kroz vaš projekat, definisati prioritete i napraviti tačan plan bez ikakvih obaveza.
+              {t.process.ctaDesc}
             </p>
           </div>
 
           <a
             href="#kontakt"
-            className="shrink-0 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#ff2a4b] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_20px_rgba(255,42,75,0.45)] transition-all active:scale-95"
+            onClick={scrollToContact}
+            className="shrink-0 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#ff2a4b] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_20px_rgba(255,42,75,0.45)] transition-all active:scale-95 cursor-pointer"
           >
-            Dogovori Besplatan Poziv
+            <span>{t.process.ctaBtn}</span>
             <ArrowRight className="w-4 h-4" />
           </a>
         </motion.div>

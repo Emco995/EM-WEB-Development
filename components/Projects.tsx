@@ -12,111 +12,27 @@ import {
   Layers,
   X,
 } from "lucide-react";
+import { useLanguage } from "@/components/LanguageContext";
+import { ProjectData } from "@/lib/translations";
 
-interface Project {
-  id: string;
-  title: string;
-  category: "E-Commerce" | "Lokalni Biznis";
-  badge: string;
-  subtitle: string;
-  description: string;
-  solution: string;
-  impactMetrics: { label: string; value: string }[];
-  highlights: string[];
-  techStack: string[];
-  demoUrl: string;
-  videoUrl: string;
-  icon: typeof Sparkles | typeof Hammer | typeof ShoppingBag;
-}
-
-const projectsData: Project[] = [
-  {
-    id: "brunchito",
-    title: "Brunchito Cakes",
-    category: "E-Commerce",
-    badge: "Food Ordering & Slastice",
-    subtitle: "Custom sistem online narudžbi sa kalkulatorom porcija i integrisanim plaćanjem",
-    description:
-      "Digitalna platforma za poslastičarnicu specijalizovanu za torte po narudžbi. Kupci u par koraka biraju ukus, veličinu, datum isporuke i plaćaju online.",
-    solution:
-      "Kreirana moderna web prodavnica sa integrisanim Stripe i PayPal checkout sistemom, automatskim obračunom porcija i punom pravnom usklađenošću za EU/njemačko tržište.",
-    impactMetrics: [
-      { label: "Proces narudžbe", value: "< 2 min" },
-      { label: "Plaćanja", value: "Stripe & PayPal" },
-      { label: "Pravna zaštita", value: "DSGVO 100%" },
-    ],
-    highlights: [
-      "Stripe & PayPal sigurni checkout sistem",
-      "Interaktivni kalkulator spratova i porcija",
-      "Usklađeno sa njemačkim zakonima (Impressum, Datenschutz, AGB)",
-      "Automatska e-mail potvrda klijentu i vlasniku",
-    ],
-    techStack: ["Next.js", "Tailwind CSS", "Stripe API", "Framer Motion"],
-    demoUrl: "https://brunchito.de",
-    videoUrl: "/videos/brunchito.mp4",
-    icon: Sparkles,
-  },
-  {
-    id: "hecic-stil",
-    title: "Stolarija Hećić Stil",
-    category: "Lokalni Biznis",
-    badge: "Namještaj po Mjeri & Radionica",
-    subtitle: "Moderni web portfolio za privlačenje lokalnih klijenata i upite za izmjeru",
-    description:
-      "Prezentacija za stolarsku radionicu sa jasnim prikazom usluga, galerijom unikatnih radova i kuhinja, te direktnim kontaktom preko jednog klika.",
-    solution:
-      "Optimizovano za lokalnu pretragu (Local SEO) sa brzim učitavanjem, modernim kontrastom i 1-klik dugmetom za WhatsApp/telefon upit za ponudu.",
-    impactMetrics: [
-      { label: "Lokalni SEO", value: "Google Rank" },
-      { label: "Učitavanje", value: "< 0.8s" },
-      { label: "Direktan upit", value: "WhatsApp / Poziv" },
-    ],
-    highlights: [
-      "Galerija namještaja po mjeri i enterijera",
-      "Optimizovano za Google Maps i lokalni profil",
-      "Jedan klik do WhatsApp upita za besplatnu ponudu",
-      "Fluidan prikaz na svim mobilnim uređajima",
-    ],
-    techStack: ["React", "Tailwind CSS", "Local SEO", "Responsive UI"],
-    demoUrl: "https://hecic-stil.vercel.app/",
-    videoUrl: "/videos/hecic-stil.mp4",
-    icon: Hammer,
-  },
-  {
-    id: "vintage-charm",
-    title: "Vintage Charm Dekoracije",
-    category: "E-Commerce",
-    badge: "Showroom & Dekoracije",
-    subtitle: "Vizuelno impresivan digitalni showroom sa elegantnim pregledom dekoracija",
-    description:
-      "E-commerce katalog za unikatne retro predmete, dekoracije i ambijentalni namještaj, sa akcentom na fotografiju i jednostavan upit za kupovinu.",
-    solution:
-      "Izgrađena brza platforma sa naprednim prikazom radova, optimizovanim prikazom slika visoke rezolucije bez usporavanja i glatkim prelazima među stranicama.",
-    impactMetrics: [
-      { label: "Core Web Vitals", value: "98/100" },
-      { label: "Katalog artikala", value: "Instant Filter" },
-      { label: "Konverzija", value: "Direktan Upit" },
-    ],
-    highlights: [
-      "Brza pretraga i filtriranje po stilu i kategorijama",
-      "Optimizovane slike visoke rezolucije i estetski showroom",
-      "Čist, sofisticiran dizajn sa jasnim pozivima na akciju",
-      "Direktan kontakt flow za rezervaciju i kupovinu dekoracija",
-    ],
-    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "UI/UX Flow"],
-    demoUrl: "https://vintage-charm-dekoracije.vercel.app/",
-    videoUrl: "/videos/vintage-charm.mp4",
-    icon: ShoppingBag,
-  },
-];
-
-type CategoryFilter = "Sve" | "E-Commerce" | "Lokalni Biznis";
+type CategoryFilter = "all" | "ecommerce" | "local";
 
 export default function Projects() {
-  const [filter, setFilter] = useState<CategoryFilter>("Sve");
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const { t } = useLanguage();
+  const [filter, setFilter] = useState<CategoryFilter>("all");
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
-  // Blokiranje skrola pozadine
+  // Ikone po ID-u projekta
+  const iconsMap: Record<string, typeof Sparkles> = {
+    brunchito: Sparkles,
+    "hecic-stil": Hammer,
+    "vintage-charm": ShoppingBag,
+  };
+
+  const projectsData = t.projects.items;
+  const selectedProject = projectsData.find((p) => p.id === selectedProjectId) || null;
+
+  // Blokiranje skrola pozadine kada je modal otvoren
   useEffect(() => {
     if (selectedProject) {
       const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -136,7 +52,7 @@ export default function Projects() {
   }, [selectedProject]);
 
   const handleCloseModal = () => {
-    setSelectedProject(null);
+    setSelectedProjectId(null);
     const targetEl = document.getElementById("projekti");
     if (targetEl) {
       const navOffset = 80;
@@ -162,9 +78,15 @@ export default function Projects() {
   }, [selectedProject]);
 
   const filteredProjects =
-    filter === "Sve"
+    filter === "all"
       ? projectsData
-      : projectsData.filter((p) => p.category === filter);
+      : projectsData.filter((p) => p.categoryKey === filter);
+
+  const filterTabs: { key: CategoryFilter; label: string }[] = [
+    { key: "all", label: t.projects.filterAll },
+    { key: "ecommerce", label: t.projects.filterEcommerce },
+    { key: "local", label: t.projects.filterLocal },
+  ];
 
   return (
     <section id="projekti" className="relative py-28 px-4 bg-[#05070a] border-t border-slate-900 transition-colors duration-500">
@@ -175,41 +97,40 @@ export default function Projects() {
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#ff2a4b] mb-3">
               <span className="w-2 h-2 rounded-full bg-[#ff2a4b]"></span>
-              Interaktivni video pregledi
+              {t.projects.badge}
             </div>
             <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-              Izdvojeni Projekti
+              {t.projects.title}
             </h2>
           </div>
           <p className="text-slate-400 max-w-md text-sm sm:text-base">
-            Pogledajte radove u akciji: brze animacije, fluidni korisnički tokovi, 
-            online plaćanja i prilagođene funkcionalnosti.
+            {t.projects.desc}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 mb-12 pb-4 border-b border-slate-800/80 font-mono text-xs">
-          {(["Sve", "E-Commerce", "Lokalni Biznis"] as CategoryFilter[]).map((tab) => (
+          {filterTabs.map((tab) => (
             <button
-              key={tab}
-              onClick={() => setFilter(tab)}
+              key={tab.key}
+              onClick={() => setFilter(tab.key)}
               className={`px-4 py-2 rounded-lg transition-all uppercase tracking-wider cursor-pointer ${
-                filter === tab
+                filter === tab.key
                   ? "bg-[#ff2a4b] text-white font-bold shadow-[0_0_15px_rgba(255,42,75,0.35)]"
                   : "bg-[#0b101b] text-slate-400 hover:text-white hover:bg-[#121a2c] border border-slate-800"
               }`}
             >
-              {tab}
+              {tab.label}
             </button>
           ))}
           <span className="ml-auto text-slate-500 text-xs hidden sm:inline-block">
-            Prikazano: {filteredProjects.length} projekta
+            {t.projects.shownCount.replace("{count}", filteredProjects.length.toString())}
           </span>
         </div>
 
         <motion.div layout className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <AnimatePresence>
-            {filteredProjects.map((project) => {
-              const Icon = project.icon;
+            {filteredProjects.map((project: ProjectData) => {
+              const Icon = iconsMap[project.id] || Sparkles;
               return (
                 <motion.div
                   key={project.id}
@@ -254,7 +175,7 @@ export default function Projects() {
                         className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover/vid:opacity-100 transition-opacity duration-300 cursor-pointer"
                       >
                         <span className="px-3.5 py-1.5 rounded-lg bg-black/90 backdrop-blur-md text-white font-mono text-xs uppercase tracking-wider border border-[#ff2a4b]/40 inline-flex items-center gap-2 shadow-2xl">
-                          Posjeti Stranicu <ExternalLink className="w-3.5 h-3.5 text-[#ff2a4b]" />
+                          {t.projects.visitSite} <ExternalLink className="w-3.5 h-3.5 text-[#ff2a4b]" />
                         </span>
                       </a>
                     </div>
@@ -315,10 +236,10 @@ export default function Projects() {
 
                       <div className="grid grid-cols-2 gap-2">
                         <button
-                          onClick={() => setSelectedProject(project)}
+                          onClick={() => setSelectedProjectId(project.id)}
                           className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#060a12] border border-slate-700/80 text-slate-200 text-xs font-semibold uppercase tracking-wider hover:border-[#ff2a4b] hover:text-white transition-all cursor-pointer"
                         >
-                          Detalji
+                          {t.projects.detailsBtn}
                           <ArrowRight className="w-3.5 h-3.5" />
                         </button>
 
@@ -328,7 +249,7 @@ export default function Projects() {
                           rel="noopener noreferrer"
                           className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#ff2a4b] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_15px_rgba(255,42,75,0.4)] transition-all cursor-pointer"
                         >
-                          Uživo
+                          {t.projects.liveBtn}
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
                       </div>
@@ -340,7 +261,7 @@ export default function Projects() {
           </AnimatePresence>
         </motion.div>
 
-        {/* MODAL ZA DETALJE PROJEKTA SPUŠTEN ISPOD NAVIGACIJE */}
+        {/* MODAL ZA DETALJE PROJEKTA */}
         <AnimatePresence>
           {selectedProject && (
             <div
@@ -362,10 +283,10 @@ export default function Projects() {
                 <div className="flex items-center justify-between px-6 py-3 bg-[#080d17] border-b border-slate-800/80 shrink-0">
                   <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#ff2a4b]">
                     <Layers className="w-4 h-4" />
-                    <span>Case Study & Pregled Rješenja</span>
+                    <span>{t.projects.caseStudyHeader}</span>
                   </div>
                   <span className="text-[11px] font-mono text-slate-500 uppercase tracking-widest hidden sm:inline-block">
-                    ESC za izlaz
+                    {t.projects.escClose}
                   </span>
                 </div>
 
@@ -387,7 +308,7 @@ export default function Projects() {
                       onClick={handleCloseModal}
                       className="shrink-0 p-2.5 rounded-xl bg-[#060a12] border border-slate-700/80 text-slate-300 hover:text-white hover:border-[#ff2a4b] hover:bg-[#ff2a4b]/10 transition-all cursor-pointer flex items-center justify-center group shadow-md"
                       aria-label="Zatvori detalje"
-                      title="Zatvori detalje i vrati se na projekte"
+                      title="Zatvori"
                     >
                       <X className="w-5 h-5 group-hover:scale-110 transition-transform text-slate-300 group-hover:text-[#ff2a4b]" />
                     </button>
@@ -408,14 +329,14 @@ export default function Projects() {
                   <div className="space-y-3 text-xs sm:text-sm text-slate-300">
                     <div className="p-4 rounded-xl bg-[#060a12] border border-slate-800/80">
                       <span className="text-[11px] uppercase font-mono tracking-wider text-slate-400 block mb-1">
-                        Problem & Zadatak:
+                        {t.projects.problemTitle}
                       </span>
                       <p className="text-slate-300">{selectedProject.description}</p>
                     </div>
 
                     <div className="p-4 rounded-xl bg-[#060a12] border border-slate-800/80">
                       <span className="text-[11px] uppercase font-mono tracking-wider text-[#ff2a4b] block mb-1">
-                        Implementirano rješenje:
+                        {t.projects.solutionTitle}
                       </span>
                       <p className="text-slate-300">{selectedProject.solution}</p>
                     </div>
@@ -423,7 +344,7 @@ export default function Projects() {
 
                   <div>
                     <span className="text-[11px] uppercase font-mono tracking-wider text-slate-400 block mb-2.5">
-                      Ključne stavke:
+                      {t.projects.highlightsTitle}
                     </span>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {selectedProject.highlights.map((h, i) => (
@@ -438,13 +359,13 @@ export default function Projects() {
 
                 {/* Footer modala sa dugmadima */}
                 <div className="px-6 py-3.5 bg-[#080d17] border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-slate-500 shrink-0">
-                  <span className="hidden sm:inline">Pritisnite ESC za izlaz</span>
+                  <span className="hidden sm:inline">{t.projects.escClose}</span>
                   <div className="flex items-center gap-3 ml-auto">
                     <button
                       onClick={handleCloseModal}
                       className="px-4 py-2 rounded-xl bg-[#060a12] border border-slate-700 text-slate-300 text-xs font-semibold uppercase tracking-wider hover:bg-slate-900 transition-all cursor-pointer"
                     >
-                      Zatvori
+                      {t.projects.modalClose}
                     </button>
                     <a
                       href={selectedProject.demoUrl}
@@ -452,7 +373,7 @@ export default function Projects() {
                       rel="noopener noreferrer"
                       className="px-4 py-2 rounded-xl bg-[#ff2a4b] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#dc2626] transition-all inline-flex items-center gap-1.5 cursor-pointer"
                     >
-                      Otvori Stranicu
+                      {t.projects.modalOpenSite}
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                   </div>

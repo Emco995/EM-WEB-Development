@@ -13,12 +13,15 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
+import { useLanguage } from "@/components/LanguageContext";
 
 interface ContactProps {
   prefilledData?: { summary: string; budget: string } | null;
 }
 
 export default function Contact({ prefilledData }: ContactProps) {
+  const { t } = useLanguage();
+
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -51,7 +54,6 @@ export default function Contact({ prefilledData }: ContactProps) {
     setLoading(true);
     setErrorMessage(null);
 
-    // Čita ključ iz .env.local ili direktno
     const accessKey =
       process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ||
       process.env.WEB3FORMS_ACCESS_KEY ||
@@ -132,13 +134,13 @@ export default function Contact({ prefilledData }: ContactProps) {
         <div className="text-center max-w-2xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#ff2a4b] mb-3">
             <span className="w-2 h-2 rounded-full bg-[#ff2a4b] animate-ping"></span>
-            Kontakt & Besplatna Procjena
+            {t.contact.badge}
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-            Započnimo Vaš Projekat
+            {t.contact.title}
           </h2>
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Trebate novu stranicu, redizajn ili sistem online plaćanja? Pošaljite upit ili se javite direktno putem WhatsApp-a za brz odgovor unutar 24h.
+            {t.contact.desc}
           </p>
         </div>
 
@@ -159,17 +161,17 @@ export default function Contact({ prefilledData }: ContactProps) {
                   <MessageCircle className="w-5 h-5" />
                 </div>
                 <span className="text-[10px] font-mono tracking-wider uppercase px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  Brz Odgovor
+                  {t.contact.waBadge}
                 </span>
               </div>
               <h4 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
-                Direktan WhatsApp
+                {t.contact.waTitle}
               </h4>
               <p className="text-xs text-slate-300 mb-3">
-                Najbrži način za postavljanje pitanja ili slanje materijala projekta.
+                {t.contact.waSub}
               </p>
               <span className="text-xs font-mono text-emerald-400 inline-flex items-center gap-1">
-                Pošalji poruku odmah <ArrowUpRight className="w-3.5 h-3.5" />
+                {t.contact.waAction} <ArrowUpRight className="w-3.5 h-3.5" />
               </span>
             </a>
 
@@ -178,9 +180,9 @@ export default function Contact({ prefilledData }: ContactProps) {
               <div className="w-11 h-11 rounded-xl bg-[#0b162c] border border-slate-700 flex items-center justify-center text-[#ff2a4b] mb-4">
                 <Mail className="w-5 h-5" />
               </div>
-              <h4 className="text-base font-bold text-white mb-1">E-Mail Upit</h4>
+              <h4 className="text-base font-bold text-white mb-1">{t.contact.emailTitle}</h4>
               <p className="text-xs text-slate-400 mb-3">
-                Za detaljnije ponude, specifikacije ili pravne informacije.
+                {t.contact.emailSub}
               </p>
               <a
                 href="mailto:contact@em-webdev.com"
@@ -195,15 +197,15 @@ export default function Contact({ prefilledData }: ContactProps) {
               <div className="flex items-center gap-3">
                 <MapPin className="w-5 h-5 text-[#ff2a4b] shrink-0" />
                 <div>
-                  <div className="text-xs font-bold text-white uppercase tracking-wider">Fokus na Tržište</div>
-                  <div className="text-[11px] text-slate-400">Njemačka (EU) & Balkan Region</div>
+                  <div className="text-xs font-bold text-white uppercase tracking-wider">{t.contact.marketFocus}</div>
+                  <div className="text-[11px] text-slate-400">{t.contact.marketSub}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 pt-3 border-t border-slate-800">
                 <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
                 <div>
-                  <div className="text-xs font-bold text-white uppercase tracking-wider">Pravna Sigurnost</div>
-                  <div className="text-[11px] text-slate-400">DSGVO, Impressum & Ugovor o radu</div>
+                  <div className="text-xs font-bold text-white uppercase tracking-wider">{t.contact.securityTitle}</div>
+                  <div className="text-[11px] text-slate-400">{t.contact.securitySub}</div>
                 </div>
               </div>
             </div>
@@ -218,15 +220,15 @@ export default function Contact({ prefilledData }: ContactProps) {
                   <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto mb-4">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Poruka je uspješno poslana!</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">{t.contact.successTitle}</h3>
                   <p className="text-sm text-slate-300 max-w-sm mx-auto mb-6">
-                    Hvala vam na upitu. Pregledat ću vaše podatke i javiti se u roku od 24 sata sa detaljnim prijedlogom.
+                    {t.contact.successDesc}
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
-                    className="px-6 py-2.5 rounded-xl bg-[#0b162c] text-xs font-mono uppercase text-slate-300 border border-slate-700 hover:text-white transition-colors"
+                    className="px-6 py-2.5 rounded-xl bg-[#0b162c] text-xs font-mono uppercase text-slate-300 border border-slate-700 hover:text-white transition-colors cursor-pointer"
                   >
-                    Pošalji još jedan upit
+                    {t.contact.sendAnother}
                   </button>
                 </div>
               ) : (
@@ -241,7 +243,7 @@ export default function Contact({ prefilledData }: ContactProps) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-2">
-                        Vaše Ime / Firma *
+                        {t.contact.formName}
                       </label>
                       <input
                         type="text"
@@ -254,7 +256,7 @@ export default function Contact({ prefilledData }: ContactProps) {
                     </div>
                     <div>
                       <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-2">
-                        Email Adresa *
+                        {t.contact.formEmail}
                       </label>
                       <input
                         type="email"
@@ -270,7 +272,7 @@ export default function Contact({ prefilledData }: ContactProps) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-2">
-                        Vrsta Usluge
+                        {t.contact.formService}
                       </label>
                       <select
                         value={formData.serviceType}
@@ -285,7 +287,7 @@ export default function Contact({ prefilledData }: ContactProps) {
                     </div>
                     <div>
                       <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-2">
-                        Okvirni Budžet
+                        {t.contact.formBudget}
                       </label>
                       <select
                         value={formData.budget}
@@ -302,14 +304,14 @@ export default function Contact({ prefilledData }: ContactProps) {
 
                   <div>
                     <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-2">
-                      Kratak Opis Projekta *
+                      {t.contact.formDesc}
                     </label>
                     <textarea
                       rows={4}
                       required
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Napišite nekoliko riječi o vašem biznisu i ciljevima..."
+                      placeholder={t.contact.formDescPlaceholder}
                       className="w-full px-4 py-3 rounded-xl bg-[#0b162c] border border-slate-700/80 text-white text-sm focus:outline-none focus:border-[#ff2a4b] transition-colors resize-none"
                     />
                   </div>
@@ -317,16 +319,16 @@ export default function Contact({ prefilledData }: ContactProps) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-4 rounded-xl bg-[#ff2a4b] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_25px_rgba(255,42,75,0.45)] transition-all flex items-center justify-center gap-2 active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-full py-4 rounded-xl bg-[#ff2a4b] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_25px_rgba(255,42,75,0.45)] transition-all flex items-center justify-center gap-2 active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                   >
                     {loading ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Slanje upita...</span>
+                        <span>{t.contact.sending}</span>
                       </>
                     ) : (
                       <>
-                        <span>Zatraži Besplatnu Procjenu</span>
+                        <span>{t.contact.submitBtn}</span>
                         <Send className="w-4 h-4" />
                       </>
                     )}
@@ -338,7 +340,7 @@ export default function Contact({ prefilledData }: ContactProps) {
 
         </div>
 
-        {/* CENTRIRANI FOOTER (SVE U SREDINI, PRAVA NA KRAJU NA MOBITELU) */}
+        {/* CENTRIRANI FOOTER */}
         <div className="pt-10 border-t border-slate-800 flex flex-col items-center justify-center gap-2 text-center text-xs font-mono text-slate-400">
           <div className="flex items-center justify-center gap-2 text-white font-bold text-sm">
             <Terminal className="w-4 h-4 text-[#ff2a4b]" />
@@ -346,7 +348,7 @@ export default function Contact({ prefilledData }: ContactProps) {
           </div>
 
           <p className="text-slate-500 text-[11px] sm:text-xs">
-            © {currentYear} Sva prava zadržana. Izrađeno po EU standardima.
+            © {currentYear} {t.contact.footerRights}
           </p>
         </div>
 

@@ -12,66 +12,17 @@ import {
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
-
-interface ServiceItem {
-  id: string;
-  badge: string;
-  title: string;
-  description: string;
-  features: string[];
-  icon: typeof ShoppingBag;
-  highlight: string;
-}
-
-const servicesData: ServiceItem[] = [
-  {
-    id: "ecommerce",
-    badge: "Visoka Konverzija",
-    title: "E-Commerce & Online Prodavnice",
-    description:
-      "Izrada prilagođenih internet prodavnica sa fokusom na jednostavno naručivanje, moderan dizajn i maksimalnu stopu završenih kupovina.",
-    features: [
-      "Integracija Stripe i PayPal checkout sistema",
-      "Prilagođeni kalkulatori i konfiguratori artikala",
-      "Automatska e-mail obavještenja za kupca i vlasnika",
-      "Pregledna i responzivna korpa za mobitele",
-    ],
-    icon: ShoppingBag,
-    highlight: "Spremno za primanje uplata od prvog dana",
-  },
-  {
-    id: "local-business",
-    badge: "Lokalni Rast",
-    title: "Web Stranice za Lokalne Biznise",
-    description:
-      "Reprezentativne web prezentacije za frizerske salone, restorane, radionice i uslužne djelatnosti koje privlače nove kupce iz vašeg grada.",
-    features: [
-      "Optimizacija za Google pretragu i Google Maps (Local SEO)",
-      "Interaktivni cjenovnici i galerije radova",
-      "1-klik zakazivanje termina (WhatsApp i telefonski poziv)",
-      "Brzo učitavanje ispod 1 sekunde na mobilnim mrežama",
-    ],
-    icon: Store,
-    highlight: "Pretvara posjetioce u stvarne klijente",
-  },
-  {
-    id: "legal-performance",
-    badge: "Sigurnost & Zakon",
-    title: "DSGVO Usklađenost & Optimizacija",
-    description:
-      "Pravna usklađenost sa strogim EU i njemačkim propisima, uz maksimalnu brzinu koja garantuje visoke pozicije na pretraživačima.",
-    features: [
-      "Pravne stranice (Impressum, Datenschutzerklärung, AGB)",
-      "Cookie consent banner po njemačkim standardima",
-      "Core Web Vitals optimizacija (ocjena 95+ na Google PageSpeed)",
-      "SSL enkripcija i zaštita podataka korisnika",
-    ],
-    icon: ShieldCheck,
-    highlight: "100% miran san pred EU i njemačkim zakonima",
-  },
-];
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function Services() {
+  const { t } = useLanguage();
+
+  const iconMapping: Record<string, typeof ShoppingBag> = {
+    ecommerce: ShoppingBag,
+    "local-business": Store,
+    "legal-performance": ShieldCheck,
+  };
+
   return (
     <section
       id="usluge"
@@ -97,22 +48,21 @@ export default function Services() {
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#ff2a4b] mb-3">
               <span className="w-2 h-2 rounded-full bg-[#ff2a4b]"></span>
-              Šta nudim vašem biznisu
+              {t.services.badge}
             </div>
             <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-              Usluge & Rješenja
+              {t.services.title}
             </h2>
           </div>
           <p className="text-slate-300 max-w-md text-sm sm:text-base">
-            Ne prodajem samo linije koda, već digitalna rješenja koja donose narudžbe,
-            nove klijente i rasterećuju vaše svakodnevno poslovanje.
+            {t.services.desc}
           </p>
         </div>
 
         {/* 3 Glavne Kartice Usluga */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-          {servicesData.map((service, idx) => {
-            const Icon = service.icon;
+          {t.services.items.map((service, idx) => {
+            const Icon = iconMapping[service.id] || ShoppingBag;
             return (
               <motion.div
                 key={service.id}
@@ -161,9 +111,9 @@ export default function Services() {
 
                   <a
                     href="#kontakt"
-                    className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b162c] border border-slate-700/80 text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#ff2a4b] hover:border-[#ff2a4b] transition-all group/btn"
+                    className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b162c] border border-slate-700/80 text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#ff2a4b] hover:border-[#ff2a4b] transition-all group/btn cursor-pointer"
                   >
-                    <span>Zatraži Ponudu za Ovo</span>
+                    <span>{t.services.requestQuoteBtn}</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
                   </a>
                 </div>
@@ -177,32 +127,40 @@ export default function Services() {
           <div className="flex items-center gap-3 justify-center md:justify-start">
             <Zap className="w-7 h-7 text-[#ff2a4b] shrink-0" />
             <div>
-              <div className="text-xs font-bold text-white uppercase tracking-wider">Top Brzina</div>
-              <div className="text-[11px] text-slate-400">Core Web Vitals 95+</div>
+              <div className="text-xs font-bold text-white uppercase tracking-wider">
+                {t.services.barSpeedTitle}
+              </div>
+              <div className="text-[11px] text-slate-400">{t.services.barSpeedSub}</div>
             </div>
           </div>
 
           <div className="flex items-center gap-3 justify-center md:justify-start">
             <CreditCard className="w-7 h-7 text-[#ff2a4b] shrink-0" />
             <div>
-              <div className="text-xs font-bold text-white uppercase tracking-wider">Online Plaćanja</div>
-              <div className="text-[11px] text-slate-400">Stripe & PayPal ready</div>
+              <div className="text-xs font-bold text-white uppercase tracking-wider">
+                {t.services.barPaymentTitle}
+              </div>
+              <div className="text-[11px] text-slate-400">{t.services.barPaymentSub}</div>
             </div>
           </div>
 
           <div className="flex items-center gap-3 justify-center md:justify-start">
             <Search className="w-7 h-7 text-[#ff2a4b] shrink-0" />
             <div>
-              <div className="text-xs font-bold text-white uppercase tracking-wider">Lokalni SEO</div>
-              <div className="text-[11px] text-slate-400">Vidljivost na Google-u</div>
+              <div className="text-xs font-bold text-white uppercase tracking-wider">
+                {t.services.barSeoTitle}
+              </div>
+              <div className="text-[11px] text-slate-400">{t.services.barSeoSub}</div>
             </div>
           </div>
 
           <div className="flex items-center gap-3 justify-center md:justify-start">
             <ShieldCheck className="w-7 h-7 text-[#ff2a4b] shrink-0" />
             <div>
-              <div className="text-xs font-bold text-white uppercase tracking-wider">DSGVO Spreman</div>
-              <div className="text-[11px] text-slate-400">Njemačka & EU pravila</div>
+              <div className="text-xs font-bold text-white uppercase tracking-wider">
+                {t.services.barLegalTitle}
+              </div>
+              <div className="text-[11px] text-slate-400">{t.services.barLegalSub}</div>
             </div>
           </div>
         </div>
