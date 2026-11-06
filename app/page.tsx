@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import Preloader from "@/components/Preloader";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -12,6 +13,7 @@ import CostEstimator from "@/components/CostEstimator";
 import Contact from "@/components/Contact";
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
   const [estimateData, setEstimateData] = useState<{
     summary: string;
     budget: string;
@@ -26,7 +28,10 @@ export default function Home() {
 
   return (
     <>
-      <Preloader />
+      <AnimatePresence mode="wait">
+        {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
+      </AnimatePresence>
+
       <main className="min-h-screen bg-[#03060c] text-white selection:bg-[#ff2a4b] selection:text-white">
         <Navbar />
         <Hero />

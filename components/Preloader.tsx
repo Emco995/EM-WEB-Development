@@ -163,7 +163,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
         </motion.div>
       </div>
 
-      {/* SREDNJI DIO: RUKE I DODATNO PODIGNUTA TAČKA */}
+      {/* SREDNJI DIO: RUKE I TAČKA SUSRETA */}
       <div className="relative w-full max-w-5xl h-64 sm:h-96 flex items-center justify-center my-auto pointer-events-none">
         
         {/* LIJEVA: ROBOTSKA RUKA */}
@@ -189,7 +189,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
           </div>
         </motion.div>
 
-        {/* TOČKA SUSRETA - DODATNO PODIGNUTA VERTIKALNO */}
+        {/* TOČKA SUSRETA */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: [0, 1.6, 1], opacity: [0, 1, 0.95] }}
@@ -252,4 +252,3 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     </motion.div>
   );
 }
-
