@@ -252,3 +252,4 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     </motion.div>
   );
 }
+

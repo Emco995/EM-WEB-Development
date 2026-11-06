@@ -11,22 +11,42 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+// Sigurna funkcija za čitanje skladišta bez rušenja Messenger WebViewa
+function getSafeStorage(key: string): string | null {
+  try {
+    if (typeof window !== "undefined" && window.localStorage) {
+      return window.localStorage.getItem(key);
+    }
+  } catch {
+    // Messenger baca SecurityError ako je uključena striktna zaštita kolačića
+    return null;
+  }
+  return null;
+}
+
+function setSafeStorage(key: string, value: string) {
+  try {
+    if (typeof window !== "undefined" && window.localStorage) {
+      window.localStorage.setItem(key, value);
+    }
+  } catch {
+    // Tiho ignoriši ako WebView zabranjuje trajno čuvanje
+  }
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>("en");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    // 1. Provjeri da li postoji ranije sačuvan izbor
+    const saved = getSafeStorage("preferred_lang") as Language | null;
+    if (saved && (saved === "bs" || saved === "de" || saved === "en")) {
+      setLanguageState(saved);
+      return;
+    }
 
+    // 2. Detekcija preko browser jezika (trenutno i 100% sigurno unutar Messengera)
     try {
-      // 1. Provjera da li korisnik već ima sačuvan izbor
-      const saved = typeof window !== "undefined" ? (localStorage.getItem("preferred_lang") as Language | null) : null;
-      if (saved && (saved === "bs" || saved === "de" || saved === "en")) {
-        setLanguageState(saved);
-        return;
-      }
-
-      // 2. Fallback na jezik browsera
       if (typeof navigator !== "undefined" && navigator.language) {
         const browserLang = navigator.language.toLowerCase();
         if (browserLang.startsWith("de")) {
@@ -34,49 +54,22 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         } else if (
           browserLang.startsWith("bs") ||
           browserLang.startsWith("hr") ||
-          browserLang.startsWith("sr")
+          browserLang.startsWith("sr") ||
+          browserLang.startsWith("me")
         ) {
           setLanguageState("bs");
+        } else {
+          setLanguageState("en");
         }
       }
-
-      // 3. Sigurna geo-IP detekcija sa timeoutom
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2500);
-
-      fetch("https://ipapi.co/json/", { signal: controller.signal })
-        .then((res) => {
-          if (!res.ok) throw new Error("Network response not ok");
-          return res.json();
-        })
-        .then((data) => {
-          clearTimeout(timeoutId);
-          const country = data?.country_code?.toUpperCase();
-          if (["BA", "HR", "RS", "ME"].includes(country)) {
-            setLanguageState("bs");
-          } else if (["DE", "AT", "CH"].includes(country)) {
-            setLanguageState("de");
-          } else {
-            setLanguageState("en");
-          }
-        })
-        .catch(() => {
-          // Tihi fallback ako mreža blokira ipapi - ne ruši aplikaciju
-        });
     } catch {
-      // Ignoriši ako je pristup skladištu zabranjen
+      setLanguageState("en");
     }
   }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    try {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("preferred_lang", lang);
-      }
-    } catch {
-      // Privatni modovi koji blokiraju localStorage
-    }
+    setSafeStorage("preferred_lang", lang);
   };
 
   const activeTranslations = translations[language] || translations.en;
@@ -89,7 +82,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         t: activeTranslations,
       }}
     >
-      {/* Prikazujemo layout odmah; unutrašnji tekstovi se reaktivno ažuriraju bez bijelog ekrana */}
       {children}
     </LanguageContext.Provider>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Preloader from "@/components/Preloader";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
@@ -24,15 +25,18 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#03060c] text-white selection:bg-[#ff2a4b] selection:text-white">
-      <Navbar />
-      <Hero />
-      <Projects />
-      <Services />
-      <Process />
-      <CostEstimator onApplyEstimate={handleApplyEstimate} />
-      <Testimonials />
-      <Contact prefilledData={estimateData} />
-    </main>
+    <>
+      <Preloader />
+      <main className="min-h-screen bg-[#03060c] text-white selection:bg-[#ff2a4b] selection:text-white">
+        <Navbar />
+        <Hero />
+        <Projects />
+        <Services />
+        <Process />
+        <CostEstimator onApplyEstimate={handleApplyEstimate} />
+        <Testimonials />
+        <Contact prefilledData={estimateData} />
+      </main>
+    </>
   );
 }
