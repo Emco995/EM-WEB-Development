@@ -1,48 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
-import Preloader from "@/components/Preloader";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Projects from "@/components/Projects";
 import Services from "@/components/Services";
 import Process from "@/components/Process";
-import CostEstimator from "@/components/CostEstimator";
+import Projects from "@/components/Projects";
 import Testimonials from "@/components/Testimonials";
+import CostEstimator from "@/components/CostEstimator";
 import Contact from "@/components/Contact";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [customEstimate, setCustomEstimate] = useState<{ summary: string; budget: string } | null>(null);
+  const [estimateData, setEstimateData] = useState<{
+    summary: string;
+    budget: string;
+  } | null>(null);
 
-  useEffect(() => {
-    if ("scrollRestoration" in window.history) {
-      window.history.scrollRestoration = "manual";
-    }
-    window.scrollTo(0, 0);
-  }, []);
-
-  const handleApplyEstimate = (summary: string, budget: string) => {
-    setCustomEstimate({ summary, budget });
+  const handleApplyEstimate = (summary: string, budgetRange: string) => {
+    setEstimateData({
+      summary,
+      budget: budgetRange,
+    });
   };
 
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
-      </AnimatePresence>
-
-      <main className="min-h-screen text-slate-100 bg-vignette-grid">
-        <Navbar />
-        <Hero />
-        <Projects />
-        <Services />
-        <CostEstimator onApplyEstimate={handleApplyEstimate} />
-        <Process />
-        <Testimonials />
-        <Contact prefilledData={customEstimate} />
-      </main>
-    </>
+    <main className="min-h-screen bg-[#03060c] text-white selection:bg-[#ff2a4b] selection:text-white">
+      <Navbar />
+      <Hero />
+      <Projects />
+      <Services />
+      <Process />
+      <CostEstimator onApplyEstimate={handleApplyEstimate} />
+      <Testimonials />
+      <Contact prefilledData={estimateData} />
+    </main>
   );
 }
