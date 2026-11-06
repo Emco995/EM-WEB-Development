@@ -2,65 +2,59 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Calculator, Check, ArrowRight, Sparkles, Clock, ShieldCheck } from "lucide-react";
+import { Calculator, Check, ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/components/LanguageContext";
 
-interface CostEstimatorProps {
-  onEstimateSelect?: (data: { summary: string; budget: string }) => void;
+export interface CostEstimatorProps {
+  onApplyEstimate?: (summary: string, budgetRange: string) => void;
 }
 
-export default function CostEstimator({ onEstimateSelect }: CostEstimatorProps) {
+export default function CostEstimator({ onApplyEstimate }: CostEstimatorProps) {
   const { t } = useLanguage();
 
-  const [projectType, setProjectType] = useState<"business" | "ecommerce" | "custom">("business");
-  const [scope, setScope] = useState<"small" | "medium" | "large">("medium");
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>(["dsgvo", "i18n"]);
+  const [selectedTypeId, setSelectedTypeId] = useState<string>("ecommerce");
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>(["payments", "dsgvo"]);
 
-  const basePrices: Record<string, number> = {
-    business: 600,
-    ecommerce: 1100,
-    custom: 1600,
+  const currentProjectTypes = t.estimator.projectTypes;
+  const currentAddOns = t.estimator.addOns;
+
+  const selectedType =
+    currentProjectTypes.find((item) => item.id === selectedTypeId) || currentProjectTypes[0];
+
+  const toggleAddOn = (id: string) => {
+    if (selectedAddOns.includes(id)) {
+      setSelectedAddOns(selectedAddOns.filter((item) => item !== id));
+    } else {
+      setSelectedAddOns([...selectedAddOns, id]);
+    }
   };
 
-  const scopeMultipliers: Record<string, { multiplier: number; weeks: string }> = {
-    small: { multiplier: 1, weeks: "1-2" },
-    medium: { multiplier: 1.4, weeks: "2-3" },
-    large: { multiplier: 2, weeks: "3-5" },
+  const calculateTotal = () => {
+    const addOnsTotal = selectedAddOns.reduce((sum, id) => {
+      const found = currentAddOns.find((item) => item.id === id);
+      return sum + (found ? found.price : 0);
+    }, 0);
+    return selectedType.price + addOnsTotal;
   };
 
-  const featureCosts: Record<string, number> = {
-    payments: 350,
-    dsgvo: 200,
-    i18n: 250,
-    seo: 150,
-  };
+  const total = calculateTotal();
 
-  const calculatedBase = (basePrices[projectType] || 600) * (scopeMultipliers[scope]?.multiplier || 1.4);
-  const calculatedAddons = selectedFeatures.reduce((acc, f) => acc + (featureCosts[f] || 0), 0);
-  const totalMin = Math.round((calculatedBase + calculatedAddons) / 50) * 50;
-  const totalMax = Math.round(totalMin * 1.25 / 50) * 50;
-
-  const toggleFeature = (id: string) => {
-    setSelectedFeatures((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
-
-  const handleApplyEstimate = () => {
-    const typeObj = t.estimator.types.find((item) => item.id === projectType);
-    const scopeObj = t.estimator.scopes.find((item) => item.id === scope);
-    const featureLabels = selectedFeatures
-      .map((fid) => t.estimator.features.find((f) => f.id === fid)?.label)
+  const handleTransferToContact = () => {
+    const addOnNames = selectedAddOns
+      .map((id) => currentAddOns.find((a) => a.id === id)?.label)
       .filter(Boolean)
       .join(", ");
 
-    const budgetString = `${totalMin}€ - ${totalMax}€`;
-    const summaryText = `[Automatska procjena]: ${typeObj?.title} | ${scopeObj?.label} | Funkcionalnosti: ${
-      featureLabels || "Standardne"
-    }`;
+    const summary = `${t.estimator.contactSummaryIntro} ${selectedType.label}. ${t.estimator.contactSummaryAddons}: ${
+      addOnNames || t.estimator.noAddons
+    }. ${t.estimator.contactSummaryCalc}: cca ${total}€.`;
 
-    if (onEstimateSelect) {
-      onEstimateSelect({ summary: summaryText, budget: budgetString });
+    let budgetCategory = "1.000€ - 2.500€";
+    if (total < 1000) budgetCategory = "500€ - 1.000€";
+    else if (total > 2500) budgetCategory = "2.500€ - 5.000€";
+
+    if (onApplyEstimate) {
+      onApplyEstimate(summary, budgetCategory);
     }
 
     const contactEl = document.getElementById("kontakt");
@@ -72,84 +66,61 @@ export default function CostEstimator({ onEstimateSelect }: CostEstimatorProps) 
   };
 
   return (
-    <section
-      id="procjena"
-      className="relative py-28 px-4 bg-[#05070a] border-t border-slate-900 transition-colors duration-500 overflow-hidden"
-    >
-      <div className="absolute top-1/3 right-10 w-[450px] h-[450px] bg-red-950/15 blur-[160px] pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-blue-950/15 blur-[160px] pointer-events-none" />
+    <section className="relative py-24 px-4 bg-[#05070a] border-t border-slate-900 transition-colors duration-500 overflow-hidden">
+      {/* Glow efekt */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-red-950/15 blur-[160px] pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="text-center max-w-2xl mx-auto mb-16">
+      <div className="max-w-5xl mx-auto relative z-10">
+        
+        {/* Header */}
+        <div className="text-center max-w-2xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#ff2a4b] mb-3">
-            <span className="w-2 h-2 rounded-full bg-[#ff2a4b] animate-ping" />
-            <Calculator className="w-3.5 h-3.5" />
-            {t.estimator.badge}
+            <Calculator className="w-4 h-4" />
+            <span>{t.estimator.badge}</span>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
             {t.estimator.title}
           </h2>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-400 text-sm">
             {t.estimator.desc}
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-7 space-y-8">
-            <div className="p-6 sm:p-7 rounded-2xl bg-[#0b101b] border border-slate-800">
-              <span className="text-xs font-mono text-[#ff2a4b] uppercase tracking-wider block mb-4">
-                {t.estimator.typeLabel}
-              </span>
+          
+          {/* LIJEVO: Selekcija opcija */}
+          <div className="lg:col-span-8 space-y-8">
+            
+            {/* 1. Korak: Tip projekta */}
+            <div>
+              <label className="text-xs font-mono uppercase tracking-wider text-slate-300 block mb-3 font-semibold">
+                {t.estimator.step1Label}
+              </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {t.estimator.types.map((type) => {
-                  const active = projectType === type.id;
+                {currentProjectTypes.map((type) => {
+                  const isSelected = selectedType.id === type.id;
                   return (
                     <button
                       key={type.id}
                       type="button"
-                      onClick={() => setProjectType(type.id as typeof projectType)}
-                      className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                        active
-                          ? "bg-red-950/20 border-[#ff2a4b] shadow-[0_0_20px_rgba(255,42,75,0.2)]"
-                          : "bg-[#060a12] border-slate-800 hover:border-slate-700 text-slate-300"
-                      }`}
-                    >
-                      <div className="font-bold text-white text-sm mb-1.5">{type.title}</div>
-                      <div className="text-[11px] text-slate-400 leading-snug">{type.desc}</div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="p-6 sm:p-7 rounded-2xl bg-[#0b101b] border border-slate-800">
-              <span className="text-xs font-mono text-[#ff2a4b] uppercase tracking-wider block mb-4">
-                {t.estimator.scopeLabel}
-              </span>
-              <div className="space-y-2.5">
-                {t.estimator.scopes.map((item) => {
-                  const active = scope === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setScope(item.id as typeof scope)}
-                      className={`w-full p-4 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-4 ${
-                        active
-                          ? "bg-red-950/20 border-[#ff2a4b] text-white"
-                          : "bg-[#060a12] border-slate-800 hover:border-slate-700 text-slate-300"
+                      onClick={() => setSelectedTypeId(type.id)}
+                      className={`p-4 rounded-xl text-left border transition-all flex flex-col justify-between cursor-pointer ${
+                        isSelected
+                          ? "bg-[#0b162c] border-[#ff2a4b] shadow-[0_0_20px_rgba(255,42,75,0.2)]"
+                          : "bg-[#080d17] border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-[#0c1424]"
                       }`}
                     >
                       <div>
-                        <div className="font-semibold text-sm text-white">{item.label}</div>
-                        <div className="text-xs text-slate-400 mt-0.5">{item.desc}</div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-bold text-white">{type.label}</span>
+                          {isSelected && <span className="w-2 h-2 rounded-full bg-[#ff2a4b] shrink-0" />}
+                        </div>
+                        <p className="text-[11px] text-slate-400 leading-relaxed mb-4">
+                          {type.desc}
+                        </p>
                       </div>
-                      <div
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                          active ? "border-[#ff2a4b] bg-[#ff2a4b] text-white" : "border-slate-700"
-                        }`}
-                      >
-                        {active && <Check className="w-3.5 h-3.5" />}
+                      <div className="text-xs font-mono font-bold text-[#ff2a4b]">
+                        {t.estimator.fromPricePrefix} {type.price}€
                       </div>
                     </button>
                   );
@@ -157,89 +128,102 @@ export default function CostEstimator({ onEstimateSelect }: CostEstimatorProps) 
               </div>
             </div>
 
-            <div className="p-6 sm:p-7 rounded-2xl bg-[#0b101b] border border-slate-800">
-              <span className="text-xs font-mono text-[#ff2a4b] uppercase tracking-wider block mb-4">
-                {t.estimator.featuresLabel}
-              </span>
+            {/* 2. Korak: Dodatne funkcionalnosti */}
+            <div>
+              <label className="text-xs font-mono uppercase tracking-wider text-slate-300 block mb-3 font-semibold">
+                {t.estimator.step2Label}
+              </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {t.estimator.features.map((feat) => {
-                  const active = selectedFeatures.includes(feat.id);
+                {currentAddOns.map((addon) => {
+                  const isChecked = selectedAddOns.includes(addon.id);
                   return (
-                    <button
-                      key={feat.id}
-                      type="button"
-                      onClick={() => toggleFeature(feat.id)}
-                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                        active
-                          ? "bg-red-950/20 border-[#ff2a4b] text-white"
-                          : "bg-[#060a12] border-slate-800 hover:border-slate-700 text-slate-300"
+                    <div
+                      key={addon.id}
+                      onClick={() => toggleAddOn(addon.id)}
+                      className={`p-4 rounded-xl border cursor-pointer transition-all flex items-start gap-3 select-none ${
+                        isChecked
+                          ? "bg-[#0b162c] border-[#ff2a4b]/80 shadow-[0_0_15px_rgba(255,42,75,0.15)]"
+                          : "bg-[#080d17] border-slate-800 hover:border-slate-700"
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div
-                          className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-                            active ? "border-[#ff2a4b] bg-[#ff2a4b] text-white" : "border-slate-700"
-                          }`}
-                        >
-                          {active && <Check className="w-3 h-3" />}
-                        </div>
-                        <span className="text-xs font-medium text-slate-200">{feat.label}</span>
+                      <div
+                        className={`w-5 h-5 rounded flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                          isChecked
+                            ? "bg-[#ff2a4b] text-white"
+                            : "border border-slate-700 bg-[#040812]"
+                        }`}
+                      >
+                        {isChecked && <Check className="w-3.5 h-3.5" />}
                       </div>
-                      <span className="text-[11px] font-mono font-bold text-[#ff2a4b] shrink-0">
-                        {feat.priceText}
-                      </span>
-                    </button>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-xs font-bold text-white">{addon.label}</span>
+                          <span className="text-[11px] font-mono text-slate-400">+{addon.price}€</span>
+                        </div>
+                        <p className="text-[11px] text-slate-400">{addon.desc}</p>
+                      </div>
+                    </div>
                   );
                 })}
               </div>
             </div>
+
           </div>
 
-          <div className="lg:col-span-5 lg:sticky lg:top-28">
-            <motion.div
-              layout
-              className="p-8 rounded-2xl bg-[#060c18]/95 backdrop-blur-xl border border-slate-700/80 shadow-[0_0_50px_rgba(0,0,0,0.85)] relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-48 h-48 bg-red-600/10 blur-[90px] pointer-events-none" />
-
+          {/* DESNO: Ukupna kalkulacija & CTA */}
+          <div className="lg:col-span-4">
+            <div className="sticky top-28 p-6 rounded-2xl bg-[#080d17] border border-slate-800 shadow-2xl">
               <div className="flex items-center gap-2 text-xs font-mono text-[#ff2a4b] uppercase tracking-wider mb-2">
-                <Sparkles className="w-4 h-4" />
-                <span>{t.estimator.summaryTitle}</span>
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{t.estimator.summaryBadge}</span>
+              </div>
+              <h3 className="text-lg font-bold text-white mb-4">{t.estimator.summaryTitle}</h3>
+
+              <div className="space-y-3 mb-6 pb-6 border-b border-slate-800 text-xs">
+                <div className="flex justify-between text-slate-300">
+                  <span className="truncate pr-2">{selectedType.label}</span>
+                  <span className="font-mono text-white shrink-0">{selectedType.price}€</span>
+                </div>
+                {selectedAddOns.map((id) => {
+                  const item = currentAddOns.find((a) => a.id === id);
+                  if (!item) return null;
+                  return (
+                    <div key={id} className="flex justify-between text-slate-400">
+                      <span className="truncate pr-2">+ {item.label}</span>
+                      <span className="font-mono text-slate-300 shrink-0">+{item.price}€</span>
+                    </div>
+                  );
+                })}
               </div>
 
-              <div className="mt-4 mb-6">
-                <div className="text-4xl sm:text-5xl font-black text-white font-mono tracking-tight">
-                  {totalMin.toLocaleString()}€ - {totalMax.toLocaleString()}€
+              {/* Ukupno */}
+              <div className="mb-6">
+                <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-1">
+                  {t.estimator.priceLabel}
                 </div>
-                <div className="flex items-center gap-2 mt-3 text-xs font-mono text-slate-400">
-                  <Clock className="w-4 h-4 text-[#ff2a4b]" />
-                  <span>
-                    {t.estimator.estTime}{" "}
-                    <strong className="text-white">
-                      {scopeMultipliers[scope]?.weeks} {t.estimator.weeksSuffix}
-                    </strong>
-                  </span>
+                <div className="text-3xl font-black text-white font-mono flex items-baseline gap-1">
+                  {t.estimator.approxPrefix} {total}
+                  <span className="text-lg text-[#ff2a4b]">€</span>
                 </div>
-              </div>
-
-              <div className="space-y-3 pt-6 border-t border-slate-800 text-xs text-slate-300 mb-8">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>{t.estimator.includedNote}</span>
+                <div className="text-[10px] text-slate-500 mt-1">
+                  {t.estimator.disclaimer}
                 </div>
               </div>
 
+              {/* CTA Dugme */}
               <button
                 type="button"
-                onClick={handleApplyEstimate}
-                className="w-full py-4 rounded-xl bg-[#ff2a4b] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_25px_rgba(255,42,75,0.45)] transition-all flex items-center justify-center gap-2 cursor-pointer group active:scale-98"
+                onClick={handleTransferToContact}
+                className="w-full py-3.5 rounded-xl bg-[#ff2a4b] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#dc2626] hover:shadow-[0_0_20px_rgba(255,42,75,0.45)] transition-all flex items-center justify-center gap-2 group active:scale-95 cursor-pointer"
               >
-                <span>{t.estimator.transferBtn}</span>
+                <span>{t.estimator.ctaBtn}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
-            </motion.div>
+            </div>
           </div>
+
         </div>
+
       </div>
     </section>
   );

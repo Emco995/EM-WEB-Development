@@ -3,7 +3,7 @@ export type Language = "bs" | "de" | "en";
 export interface ProjectData {
   id: string;
   title: string;
-  category: "E-Commerce" | "Lokalni Biznis" | "Lokales Unternehmen" | "Local Business";
+  category: string;
   categoryKey: "ecommerce" | "local";
   badge: string;
   subtitle: string;
@@ -41,6 +41,13 @@ export interface TestimonialItem {
   projectUrl: string;
   resultMetric: string;
   metricLabel: string;
+}
+
+export interface EstimatorOption {
+  id: string;
+  label: string;
+  desc: string;
+  price: number;
 }
 
 export const translations = {
@@ -221,32 +228,32 @@ export const translations = {
       ],
     },
     estimator: {
-      badge: "Kalkulator Troškova",
-      title: "Procijenite Vaš Projekat",
-      desc: "Konfigurišite željene funkcionalnosti i dobijte okvirnu procjenu investicije i vremena izrade u realnom vremenu.",
-      typeLabel: "1. Tip Web Rješenja",
-      scopeLabel: "2. Obim & Broj Stranica",
-      featuresLabel: "3. Dodatne Funkcionalnosti",
-      summaryTitle: "Okvirna Procjena Investicije",
-      estTime: "Okvirno vrijeme izrade:",
-      weeksSuffix: "sedmice",
-      includedNote: "Uključuje optimizaciju brzine, mobile-first dizajn i postavljanje na vašu domenu.",
-      transferBtn: "Pošalji Ovu Procjenu u Kontakt",
-      types: [
-        { id: "business", title: "Lokalni Biznis", desc: "Predstavljanje usluga, portfolio i 1-klik zakazivanje" },
-        { id: "ecommerce", title: "E-Commerce Shop", desc: "Online narudžbe, kalkulator artikala i Stripe/PayPal" },
-        { id: "custom", title: "Custom Web Aplikacija", desc: "Napredni sistemi, korisnički nalozi i baze podataka" },
+      badge: "Transparentna Procjena",
+      title: "Kalkulator Okvirne Cijene Projekta",
+      desc: "Izaberite opcije koje su vam potrebne i saznajte procijenjeni budžet u realnom vremenu — bez skrivenih troškova.",
+      step1Label: "1. Izaberite osnovni tip rješenja:",
+      step2Label: "2. Dodatni moduli & funkcionalnosti:",
+      fromPricePrefix: "od",
+      summaryBadge: "Procjena Ulaganja",
+      summaryTitle: "Vaša Konfiguracija",
+      noAddons: "Nema dodatnih opcija",
+      priceLabel: "Okvirna cijena:",
+      approxPrefix: "cca",
+      disclaimer: "*Fiksna i konačna cijena se potvrđuje nakon besplatnih konsultacija.",
+      ctaBtn: "Pošalji Upit sa Ovim Planom",
+      contactSummaryIntro: "Zainteresovan sam za",
+      contactSummaryAddons: "Željeni dodaci",
+      contactSummaryCalc: "Okvirna kalkulacija",
+      projectTypes: [
+        { id: "business", label: "Lokalni Biznis Prezentacija", desc: "Do 5 stranica, cjenovnik, kontakt, Local SEO", price: 650 },
+        { id: "ecommerce", label: "E-Commerce Web Shop", desc: "Online narudžbe, artikli, košarica, Stripe & PayPal", price: 1200 },
+        { id: "custom", label: "Custom Web Aplikacija", desc: "Kalkulatori, baze, prilagođene rezervacije i flow", price: 1800 },
       ],
-      scopes: [
-        { id: "small", label: "Jedna stranica (One-Page / Landing)", desc: "1-3 sekcije, brzi fokus na kontakt" },
-        { id: "medium", label: "Standardni sajt (do 5 podstranica)", desc: "Početna, O nama, Usluge, Galerija, Kontakt" },
-        { id: "large", label: "Kompletan portal (5-15+ stranica)", desc: "Katalog, blog, filteri i višejezičnost" },
-      ],
-      features: [
-        { id: "payments", label: "Online plaćanje (Stripe / PayPal)", priceText: "+350 €" },
-        { id: "dsgvo", label: "Pravni paket za EU (DSGVO, Impressum, Consent)", priceText: "+200 €" },
-        { id: "i18n", label: "Višejezičnost (2-3 jezika sa auto detekcijom)", priceText: "+250 €" },
-        { id: "seo", label: "Napredni Local SEO & Google Search Console", priceText: "+150 €" },
+      addOns: [
+        { id: "payments", label: "Stripe & PayPal Plaćanja", desc: "Automatska naplata karticama uz email potvrde", price: 250 },
+        { id: "dsgvo", label: "DSGVO & Pravni Paket (Njemačka)", desc: "Impressum, Datenschutz, Cookie Banner po zakonu", price: 150 },
+        { id: "multilang", label: "Višejezičnost (DE / EN / BIH)", desc: "Kompletan prevod i selektor jezika", price: 200 },
+        { id: "speed", label: "Ultra-Speed & Core Web Vitals", desc: "Optimizacija performansi za 95+ PageSpeed ocjenu", price: 150 },
       ],
     },
     projects: {
@@ -553,32 +560,32 @@ export const translations = {
       ],
     },
     estimator: {
-      badge: "Projektkosten-Rechner",
-      title: "Projekt Budget & Zeitplan Kalkulieren",
-      desc: "Wählen Sie Ihre gewünschten Funktionen und erhalten Sie in Echtzeit eine verlässliche Kostenschätzung für Ihr Webprojekt.",
-      typeLabel: "1. Art der Weblösung",
-      scopeLabel: "2. Umfang & Seitenanzahl",
-      featuresLabel: "3. Erweiterte Funktionen",
-      summaryTitle: "Geschätzte Investition",
-      estTime: "Geschätzte Umsetzungszeit:",
-      weeksSuffix: "Wochen",
-      includedNote: "Inklusive Ladezeit-Optimierung, Mobile-First UI und Domain-Aufschaltung.",
-      transferBtn: "Diese Schätzung ins Formular Übernehmen",
-      types: [
-        { id: "business", title: "Lokales Unternehmen", desc: "Leistungsübersicht, Portfolio und 1-Klick-Direktanfragen" },
-        { id: "ecommerce", title: "E-Commerce Shop", desc: "Online-Bestellungen, Produktkonfigurator und Stripe/PayPal" },
-        { id: "custom", title: "Individuelle Webanwendung", desc: "Komplexe Prozesse, Kundenportale und Datenbank-Logik" },
+      badge: "Transparente Kostenschätzung",
+      title: "Kalkulator für Ihr Projektbudget",
+      desc: "Wählen Sie die gewünschten Optionen und erhalten Sie in Echtzeit einen Richtwert für Ihre Investition – ohne versteckte Kosten.",
+      step1Label: "1. Wählen Sie den Basistyp der Lösung:",
+      step2Label: "2. Zusätzliche Module & Funktionen:",
+      fromPricePrefix: "ab",
+      summaryBadge: "Investitionsschätzung",
+      summaryTitle: "Ihre Konfiguration",
+      noAddons: "Keine zusätzlichen Optionen",
+      priceLabel: "Geschätzter Preis:",
+      approxPrefix: "ca.",
+      disclaimer: "*Der verbindliche Festpreis wird nach einem kostenlosen Beratungsgespräch bestätigt.",
+      ctaBtn: "Anfrage mit diesem Plan senden",
+      contactSummaryIntro: "Ich interessiere mich für",
+      contactSummaryAddons: "Gewünschte Zusatzoptionen",
+      contactSummaryCalc: "Geschätzte Kalkulation",
+      projectTypes: [
+        { id: "business", label: "Präsenz für Lokale Unternehmen", desc: "Bis zu 5 Seiten, Preisliste, Kontakt, Local SEO", price: 650 },
+        { id: "ecommerce", label: "E-Commerce Online-Shop", desc: "Online-Bestellungen, Produkte, Warenkorb, Stripe & PayPal", price: 1200 },
+        { id: "custom", label: "Individuelle Webanwendung", desc: "Kalkulatoren, Datenbanken, maßgeschneiderte Buchungsabläufe", price: 1800 },
       ],
-      scopes: [
-        { id: "small", label: "One-Page / Landingpage", desc: "1-3 Sektionen, ideal für gezielte Kampagnen" },
-        { id: "medium", label: "Standard-Website (bis zu 5 Seiten)", desc: "Startseite, Über uns, Leistungen, Galerie, Kontakt" },
-        { id: "large", label: "Komplettportal (5-15+ Seiten)", desc: "Produktkatalog, Blog, Filter und Mehrsprachigkeit" },
-      ],
-      features: [
-        { id: "payments", label: "Online-Zahlung (Stripe / PayPal)", priceText: "+350 €" },
-        { id: "dsgvo", label: "DSGVO-Rechtspaket (Impressum, Datenschutz, Cookie Banner)", priceText: "+200 €" },
-        { id: "i18n", label: "Mehrsprachigkeit (2-3 Sprachen mit Auto-Erkennung)", priceText: "+250 €" },
-        { id: "seo", label: "Erweitertes Local SEO & Google Search Console", priceText: "+150 €" },
+      addOns: [
+        { id: "payments", label: "Stripe & PayPal Zahlungen", desc: "Automatische Kartenzahlung mit E-Mail-Bestätigung", price: 250 },
+        { id: "dsgvo", label: "DSGVO & Rechtspaket (Deutschland)", desc: "Impressum, Datenschutz, Cookie-Banner nach Gesetz", price: 150 },
+        { id: "multilang", label: "Mehrsprachigkeit (DE / EN / BIH)", desc: "Vollständige Übersetzung und Sprachwähler", price: 200 },
+        { id: "speed", label: "Ultra-Speed & Core Web Vitals", desc: "Performance-Optimierung für 95+ PageSpeed Score", price: 150 },
       ],
     },
     projects: {
@@ -885,32 +892,32 @@ export const translations = {
       ],
     },
     estimator: {
-      badge: "Cost Estimator",
-      title: "Calculate Project Budget & Timeline",
-      desc: "Configure your desired technical specifications and get an accurate real-time estimate of the investment and delivery time.",
-      typeLabel: "1. Web Architecture Type",
-      scopeLabel: "2. Scope & Page Volume",
-      featuresLabel: "3. Advanced Features",
-      summaryTitle: "Estimated Project Budget",
-      estTime: "Estimated delivery timeline:",
-      weeksSuffix: "weeks",
-      includedNote: "Includes Core Web Vitals optimization, responsive layout, and custom domain configuration.",
-      transferBtn: "Apply This Estimate to Contact Form",
-      types: [
-        { id: "business", title: "Local Business", desc: "Service showcase, portfolio gallery & 1-tap bookings" },
-        { id: "ecommerce", title: "E-Commerce Store", desc: "Online checkout, product configurator & Stripe/PayPal" },
-        { id: "custom", title: "Custom Web Application", desc: "Custom business logic, user auth & database architecture" },
+      badge: "Transparent Estimation",
+      title: "Project Cost Estimator",
+      desc: "Select the options you need and get a reliable budget estimate in real time — with no hidden fees.",
+      step1Label: "1. Select core solution type:",
+      step2Label: "2. Additional modules & features:",
+      fromPricePrefix: "from",
+      summaryBadge: "Investment Estimate",
+      summaryTitle: "Your Configuration",
+      noAddons: "No additional options selected",
+      priceLabel: "Estimated price:",
+      approxPrefix: "approx.",
+      disclaimer: "*The binding final price is confirmed following a free consultation call.",
+      ctaBtn: "Send Inquiry With This Plan",
+      contactSummaryIntro: "I am interested in",
+      contactSummaryAddons: "Selected add-ons",
+      contactSummaryCalc: "Estimated calculation",
+      projectTypes: [
+        { id: "business", label: "Local Business Showcase", desc: "Up to 5 pages, pricing list, contact, Local SEO", price: 650 },
+        { id: "ecommerce", label: "E-Commerce Web Shop", desc: "Online checkout, products, cart, Stripe & PayPal", price: 1200 },
+        { id: "custom", label: "Custom Web Application", desc: "Calculators, database, tailored booking & user flow", price: 1800 },
       ],
-      scopes: [
-        { id: "small", label: "One-Page / Landing Page", desc: "1-3 high-converting focused sections" },
-        { id: "medium", label: "Standard Website (up to 5 pages)", desc: "Home, About, Services, Gallery, Contact" },
-        { id: "large", label: "Comprehensive Portal (5-15+ pages)", desc: "Product catalog, multi-language & custom search" },
-      ],
-      features: [
-        { id: "payments", label: "Online Payments (Stripe / PayPal)", priceText: "+350 €" },
-        { id: "dsgvo", label: "EU & GDPR Compliance (Impressum, Privacy, Consent)", priceText: "+200 €" },
-        { id: "i18n", label: "Multi-language (2-3 languages with geo-detection)", priceText: "+250 €" },
-        { id: "seo", label: "Advanced Local SEO & Google Search Console", priceText: "+150 €" },
+      addOns: [
+        { id: "payments", label: "Stripe & PayPal Checkout", desc: "Automated card payments with instant email receipts", price: 250 },
+        { id: "dsgvo", label: "GDPR & Legal Compliance (Germany/EU)", desc: "Compliant Impressum, Privacy Policy & Cookie Banner", price: 150 },
+        { id: "multilang", label: "Multi-Language (DE / EN / BIH)", desc: "Full localized copy and country auto-detection", price: 200 },
+        { id: "speed", label: "Ultra-Speed & Core Web Vitals", desc: "Performance fine-tuning targeting 95+ PageSpeed scores", price: 150 },
       ],
     },
     projects: {
