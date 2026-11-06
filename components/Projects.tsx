@@ -340,12 +340,12 @@ export default function Projects() {
           </AnimatePresence>
         </motion.div>
 
-        {/* MODAL ZA DETALJE PROJEKTA SA IDENTIČNIM BLUR EFEKTOM KAO IMPRESSUM */}
+        {/* MODAL ZA DETALJE PROJEKTA SPUŠTEN ISPOD NAVIGACIJE */}
         <AnimatePresence>
           {selectedProject && (
             <div
               onClick={handleCloseModal}
-              className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md"
+              className="fixed inset-0 z-[110] flex items-start justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md pt-24 sm:pt-28 overflow-y-auto"
             >
               <motion.div
                 onClick={(e) => e.stopPropagation()}
@@ -353,7 +353,7 @@ export default function Projects() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 15 }}
                 transition={{ duration: 0.2 }}
-                className="relative w-full max-w-2xl bg-[#0b101b] border border-slate-800 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.95)] overflow-hidden max-h-[85vh] flex flex-col"
+                className="relative w-full max-w-2xl bg-[#0b101b] border border-slate-800 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.95)] overflow-hidden max-h-[calc(100vh-8rem)] flex flex-col my-auto sm:my-0"
               >
                 {/* Crvena linija na vrhu */}
                 <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#ff2a4b] to-transparent shrink-0" />
